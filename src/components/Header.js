@@ -1,18 +1,21 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { setLoginedUser } from "../actions/loginedUser";
+import { receiveAuthLogout } from "../actions/loginedUser";
 import { withRouter } from "react-router-dom";
 
 class Header extends Component {
   handleLogout = () => {
-    const { setLoginedUser, history } = this.props;
-    setLoginedUser(null);
-    history.push("/");
+    const { dispatch } = this.props;
+    dispatch(receiveAuthLogout());
+    this.props.history.push({
+      pathname: "/login",
+      state: { from: "/home" }
+    });
   };
 
   render() {
-    const { authedUser, avatar } = this.props;
+    const { activeUser, avatar } = this.props;
     return (
       <div className="title-bar">
         <nav>
@@ -54,7 +57,7 @@ class Header extends Component {
               />
             </li>
             <li className="padding-zero user-name nav-li">
-              Hello, {authedUser}
+              Hello, {activeUser}
             </li>
 
             <li onClick={this.handleLogout} className="nav-li">
@@ -68,20 +71,13 @@ class Header extends Component {
 }
 
 function mapStatetoProps({ authedUser, users }) {
-  const avatar = users[authedUser].avatarURL;
+  const activeUser = authedUser.loggedInUser;
+  const avatar = users[activeUser].avatarURL;
 
   return {
-    authedUser,
+    activeUser,
     avatar
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    setLoginedUser: (id) => {
-      dispatch(setLoginedUser(id));
-    }
-  };
-}
-
-export default withRouter(connect(mapStatetoProps, mapDispatchToProps)(Header));
+export default withRouter(connect(mapStatetoProps)(Header));

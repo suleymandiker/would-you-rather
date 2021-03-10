@@ -134,14 +134,19 @@ class QuestionDetail extends Component {
 }
 
 function mapStateToProps({ authedUser, questions, users }, props) {
+  //const authedUser1 = authedUser.loggedInUser;
   const { question_id } = props.match.params;
   const question = questions[question_id];
   const authorAvatar = users[question.author].avatarURL;
   const author = users[question.author].id;
   const optionOne = question.optionOne.text;
   const optionTwo = question.optionTwo.text;
-  const isOneAnswered = question.optionOne.votes.includes(authedUser);
-  const isTwoAnswered = question.optionTwo.votes.includes(authedUser);
+  const isOneAnswered = question.optionOne.votes.includes(
+    authedUser.loggedInUser
+  );
+  const isTwoAnswered = question.optionTwo.votes.includes(
+    authedUser.loggedInUser
+  );
   const answered = isOneAnswered || isTwoAnswered;
 
   return {

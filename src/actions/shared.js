@@ -9,7 +9,6 @@ import {
   save_action_questionAnswer,
   add_action_question
 } from "../actions/questions";
-import { setLoginedUser } from "../actions/loginedUser";
 
 import { getAPIUsers } from "../utils/api";
 import { getAPIQuestions } from "../utils/api";
@@ -29,7 +28,6 @@ export function getUsers(AUTHED_ID) {
   return (dispatch) => {
     return getAPIUsers().then((users) => {
       dispatch(get_action_users(users));
-      dispatch(setLoginedUser(AUTHED_ID));
     });
   };
 }
@@ -48,12 +46,12 @@ export function saveQuestionAnswer(qid, answer) {
 export function addQuestion(optionOneText, optionTwoText) {
   return (dispatch, getState) => {
     const { authedUser } = getState();
-    const author = authedUser;
+    const author = authedUser.loggedInUser;
 
     return saveAPIQuestion({ optionOneText, optionTwoText, author }).then(
       (poll) => {
         dispatch(add_action_question(poll));
-        dispatch(add_action_userQuestion(authedUser, poll.id));
+        dispatch(add_action_userQuestion(author, poll.id));
       }
     );
   };

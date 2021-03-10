@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import { setLoginedUser } from "../actions/loginedUser";
+import { handleLoginUser } from "../actions/loginedUser";
+import { withRouter } from "react-router";
 
 class Login extends Component {
   state = {
@@ -12,10 +13,16 @@ class Login extends Component {
   handleLogin = (e) => {
     e.preventDefault();
     const { activeUser } = this.state;
-    const { setLoginedUser } = this.props;
+    const { dispatch } = this.props;
+    const from =
+      this.props.location !== undefined &&
+      this.props.location.state !== undefined
+        ? this.props.location.state.from
+        : "/home";
 
     if (activeUser) {
-      setLoginedUser(activeUser);
+      dispatch(handleLoginUser(activeUser));
+      this.props.history.push(`${from}`);
     } else alert("Please select a user!");
   };
 
@@ -54,18 +61,10 @@ class Login extends Component {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    setLoginedUser: (id) => {
-      dispatch(setLoginedUser(id));
-    }
-  };
-}
-
 function mapStateToProps({ users }) {
   return {
     users
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default withRouter(connect(mapStateToProps)(Login));

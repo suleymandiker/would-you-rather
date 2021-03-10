@@ -7,7 +7,7 @@ function PageError() {
       <h1>We don't have this page</h1>
       <p className="padding-top">
         You can click this link to go back to home page
-        <NavLink to="/"> Click Here</NavLink>{" "}
+        <NavLink to="/home"> Click Here</NavLink>{" "}
       </p>
     </div>
   );

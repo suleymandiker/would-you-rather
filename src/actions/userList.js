@@ -12,7 +12,7 @@ export function get_action_users(users) {
 export function save_action_userAnswer(authedUser, qid, answer) {
   return {
     type: SAVE_USER_ANSWER,
-    authedUser,
+    authedUser: authedUser.loggedInUser,
     qid,
     answer
   };

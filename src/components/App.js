@@ -1,5 +1,10 @@
 import React, { Component, Fragment } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect
+} from "react-router-dom";
 import Login from "../components/Login";
 import { connect } from "react-redux";
 import { getUsers } from "../actions/shared";
@@ -8,6 +13,7 @@ import QuestionDetail from "./QuestionDetail";
 import AddQuestion from "./AddQuestion";
 import Leaderboard from "./Leaderboard";
 import PageError from "./PageError";
+import PrivateRoute from "./PrivateRoute";
 
 class App extends Component {
   componentDidMount() {
@@ -16,23 +22,23 @@ class App extends Component {
   }
 
   render() {
+    // const { loggedInUser } = this.props;
+
     return (
       <Router>
         <Fragment>
           <Switch>
-            {this.props.authedUser === null ? (
-              <Route path="/" exact component={Login} />
-            ) : (
-              <Fragment>
-                <Route path="/" exact component={Home} />
-                <Route
-                  path="/questions/:question_id"
-                  component={QuestionDetail}
-                />
-                <Route path="/add" exact component={AddQuestion} />
-                <Route path="/leaderboard" exact component={Leaderboard} />
-              </Fragment>
-            )}
+            <Route path="/login" component={Login} />
+            <PrivateRoute path="/home" component={Home} />
+            <Redirect exact from="/" to="/home" />
+            <PrivateRoute path="/add" component={AddQuestion} />
+            <PrivateRoute path="/leaderboard" component={Leaderboard} />
+
+            <PrivateRoute
+              path="/questions/:question_id"
+              component={QuestionDetail}
+            />
+            <PrivateRoute path="*" component={PageError} />
             <Route component={PageError} />
           </Switch>
         </Fragment>
@@ -41,9 +47,10 @@ class App extends Component {
   }
 }
 
-function mapStateToProps({ authedUser }) {
+function mapStateToProps({ users, authedUser }) {
   return {
-    authedUser
+    loggedInUser: authedUser.loggedInUser,
+    authenticated: authedUser.authenticated
   };
 }
 

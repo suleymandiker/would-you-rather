@@ -12,7 +12,7 @@ export function get_action_questions(questions) {
 export function save_action_questionAnswer(authedUser, qid, answer) {
   return {
     type: SAVE_QUESTION_ANSWER,
-    authedUser,
+    authedUser: authedUser.loggedInUser,
     qid,
     answer
   };

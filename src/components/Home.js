@@ -66,7 +66,8 @@ class Home extends Component {
 }
 
 function mapStateToProps({ questions, authedUser, users }) {
-  const user = users[authedUser];
+  const activeUser = authedUser.loggedInUser;
+  const user = users[activeUser];
 
   const answeredQuestions =
     Object.keys(questions).length !== 0
