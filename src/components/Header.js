@@ -70,7 +70,7 @@ class Header extends Component {
   }
 }
 
-function mapStatetoProps({ authedUser, users }) {
+function mapStateToProps({ authedUser, users }) {
   const activeUser = authedUser.loggedInUser;
   const avatar = users[activeUser].avatarURL;
 
@@ -80,4 +80,4 @@ function mapStatetoProps({ authedUser, users }) {
   };
 }
 
-export default withRouter(connect(mapStatetoProps)(Header));
+export default withRouter(connect(mapStateToProps)(Header));

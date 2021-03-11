@@ -11,10 +11,10 @@ class Question extends Component {
     }
 
     const { optionOne, optionTwo } = question;
-    const { id } = this.props;
+    const { question_id } = this.props;
 
     return (
-      <Link to={`/questions/${id}`} className="form margin poll-form">
+      <Link to={`/questions/${question_id}`} className="form margin poll-form">
         <div className="form-header">
           <p className="form-title">Would You Rather</p>
         </div>
@@ -34,11 +34,13 @@ class Question extends Component {
 
 function mapStateToProps({ authedUser, questions }, { id }) {
   const question = questions[id];
+  const question_id = id;
 
   return {
     authedUser,
     question,
-    id
+    id,
+    question_id
   };
 }
 

@@ -2,16 +2,11 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import Question from "./Question";
 import Header from "./Header";
-import { getQuestions } from "../actions/shared";
 
 class Home extends Component {
   state = {
     tabStatus: "unanswered"
   };
-
-  componentDidMount() {
-    this.props.dispatch(getQuestions());
-  }
 
   render() {
     const { answeredQuestions, unansweredQuestions } = this.props;

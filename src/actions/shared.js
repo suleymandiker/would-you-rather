@@ -32,13 +32,16 @@ export function getUsers(AUTHED_ID) {
   };
 }
 
-export function saveQuestionAnswer(qid, answer) {
+export function saveQuestionAnswer(qid, answer, props) {
   return (dispatch, getState) => {
     const { authedUser } = getState();
-
     return saveAPIAnswer({ authedUser, qid, answer }).then(() => {
       dispatch(save_action_questionAnswer(authedUser, qid, answer));
       dispatch(save_action_userAnswer(authedUser, qid, answer));
+
+      props.history.push({
+        pathname: `/questions/` + qid
+      });
     });
   };
 }

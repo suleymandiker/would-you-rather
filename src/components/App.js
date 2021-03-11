@@ -14,11 +14,13 @@ import AddQuestion from "./AddQuestion";
 import Leaderboard from "./Leaderboard";
 import PageError from "./PageError";
 import PrivateRoute from "./PrivateRoute";
+import { getQuestions } from "../actions/shared";
 
 class App extends Component {
   componentDidMount() {
     const USER_ID = null;
     this.props.dispatch(getUsers(USER_ID));
+    this.props.dispatch(getQuestions());
   }
 
   render() {
@@ -33,11 +35,7 @@ class App extends Component {
             <Redirect exact from="/" to="/home" />
             <PrivateRoute path="/add" component={AddQuestion} />
             <PrivateRoute path="/leaderboard" component={Leaderboard} />
-
-            <PrivateRoute
-              path="/questions/:question_id"
-              component={QuestionDetail}
-            />
+            <PrivateRoute path="/questions/:id" component={QuestionDetail} />
             <PrivateRoute path="*" component={PageError} />
             <Route component={PageError} />
           </Switch>
@@ -47,10 +45,11 @@ class App extends Component {
   }
 }
 
-function mapStateToProps({ users, authedUser }) {
+function mapStateToProps({ users, authedUser, questions }) {
   return {
     loggedInUser: authedUser.loggedInUser,
-    authenticated: authedUser.authenticated
+    authenticated: authedUser.authenticated,
+    questions
   };
 }
 

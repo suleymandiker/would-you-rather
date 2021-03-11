@@ -3,10 +3,13 @@ import { connect } from "react-redux";
 import Header from "./Header";
 import FaCheck from "react-icons/lib/fa/check";
 import { saveQuestionAnswer } from "../actions/shared";
+import PageError from "./PageError";
+import { withRouter } from "react-router-dom";
 
 class QuestionDetail extends Component {
   state = {
-    selectedOption: ""
+    selectedOption: "",
+    questionID: ""
   };
 
   selectRadio = (e) => {
@@ -17,24 +20,38 @@ class QuestionDetail extends Component {
 
   submitAnswer = (e) => {
     e.preventDefault();
+    const questionID = this.props.match.params.id;
+    const { questions } = this.props;
 
-    const { savePollAnswer } = this.props;
-    const answer = this.state.selectedOption;
-
-    savePollAnswer(answer);
+    if (!questions[questionID]) {
+      return <PageError />;
+    }
+    if (this.state.selectedOption) {
+      const { savePollAnswer } = this.props;
+      const answer = this.state.selectedOption;
+      savePollAnswer(answer, questionID);
+    } else {
+      alert("Please select a option!");
+    }
   };
 
   render() {
-    const {
-      question,
-      authorAvatar,
-      author,
-      optionOne,
-      optionTwo,
-      answered,
-      isOneAnswered,
-      isTwoAnswered
-    } = this.props;
+    const questionID = this.props.match.params.id;
+    const { activeUser, questions, users } = this.props;
+
+    if (!questions[questionID]) {
+      return <PageError />;
+    }
+
+    const question = questions[questionID];
+    const author = users[question.author].id;
+    const authorAvatar = users[question.author].avatarURL;
+    const optionOne = question.optionOne.text;
+    const optionTwo = question.optionTwo.text;
+    const isOneAnswered = question.optionOne.votes.includes(activeUser);
+    const isTwoAnswered = question.optionTwo.votes.includes(activeUser);
+    const answered = isOneAnswered || isTwoAnswered;
+
     const optionOneVotes = question.optionOne.votes.length;
     const optionTwoVotes = question.optionTwo.votes.length;
     const optionOnePercentage = (
@@ -45,6 +62,7 @@ class QuestionDetail extends Component {
       (optionTwoVotes / (optionOneVotes + optionTwoVotes)) *
       100
     ).toFixed(2);
+
     return (
       <Fragment>
         <Header />
@@ -134,44 +152,23 @@ class QuestionDetail extends Component {
 }
 
 function mapStateToProps({ authedUser, questions, users }, props) {
-  //const authedUser1 = authedUser.loggedInUser;
-  const { question_id } = props.match.params;
-  const question = questions[question_id];
-  const authorAvatar = users[question.author].avatarURL;
-  const author = users[question.author].id;
-  const optionOne = question.optionOne.text;
-  const optionTwo = question.optionTwo.text;
-  const isOneAnswered = question.optionOne.votes.includes(
-    authedUser.loggedInUser
-  );
-  const isTwoAnswered = question.optionTwo.votes.includes(
-    authedUser.loggedInUser
-  );
-  const answered = isOneAnswered || isTwoAnswered;
+  const activeUser = authedUser.loggedInUser;
 
   return {
-    authorAvatar,
-    author,
-    optionOne,
-    optionTwo,
-    answered,
-    isOneAnswered,
-    isTwoAnswered,
-    question,
-    users,
+    activeUser,
     questions,
-    authedUser,
-    question_id
+    users
   };
 }
 
 function mapDispatchToProps(dispatch, props) {
-  const { question_id } = props.match.params;
   return {
-    savePollAnswer: (answer) => {
-      dispatch(saveQuestionAnswer(question_id, answer));
+    savePollAnswer: (answer, question_id) => {
+      dispatch(saveQuestionAnswer(question_id, answer, props));
     }
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(QuestionDetail);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(QuestionDetail)
+);
